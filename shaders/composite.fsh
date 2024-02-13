@@ -73,11 +73,13 @@ void main() {
   // float sunColor = computeLambertDiffuse(normal, sunDir);
   float sunColor = computeOrenNayarDiffuse(normal, sunDir, 0.5, 0.75) * sunStrength;
 
-  
   color = color * (shadowStrength + ambientColor + sunColor * light.y + torchColor);
 
-  // color = color / (color + vec3(1.0));
-  color = vec3(1.0) - exp(-color * 0.000075); // Incorrect Reinhard tonemapping
+  // color = vec3(1.0) - exp(-color * 0.0001); // Incorrect Reinhard tonemapping
+  color = RGBToCIExyY(color);
+  color.z = 1.0 - exp(-color.z * 0.0001); // Incorrect Reinhard tonemapping
+  color = CIExyYToRGB(color);
+
   color = linearToGamma(color);
   gl_FragData[0] = vec4(vec3(color), 1.0);
 }
