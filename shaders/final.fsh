@@ -1,4 +1,4 @@
-#version 130
+#version 430
+#define STAGE_FRAGMENT
 
-#include "/lib/common.glsl"
-#include "/program/fragment/simple.fsh"
+#include "/program/pipeline/final.glsl"

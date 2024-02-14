@@ -1,3 +1,4 @@
-#version 130
+#version 430
+#define STAGE_VERTEX
 
-#include "/program/vertex/simple.vsh"
+#include "/program/pipeline/final.glsl"

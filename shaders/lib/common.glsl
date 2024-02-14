@@ -1,10 +1,6 @@
 #ifndef INCLUDE_COMMON
 #define INCLUDE_COMMON
 
-/* --------------------------------- OPTIONS -------------------------------- */
-
-/* -------------------------------- BUILT-IN -------------------------------- */
-
-const float ambientOcclusionLevel = 0.0;
+const float alphaTreshold = 0.1;
 
 #endif // INCLUDE_COMMON
