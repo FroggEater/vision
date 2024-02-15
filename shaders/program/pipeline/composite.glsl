@@ -10,7 +10,6 @@
 
 #ifdef FSH
 
-layout(std430, binding = 0) buffer histogram { uint bins[256]; uint count; };
 layout(location = 0) out vec3 color;
 
 in vec2 uv0;
