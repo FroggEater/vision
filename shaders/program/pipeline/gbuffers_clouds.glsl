@@ -1,7 +1,7 @@
 /* -------------------------------- FRAGMENT -------------------------------- */
 
-#ifdef STAGE_FRAGMENT
+#ifdef FSH
 
 void main() { discard; }
 
-#endif // STAGE_FRAGMENT
+#endif // FSH

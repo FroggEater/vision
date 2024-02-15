@@ -1,6 +1,6 @@
 /* --------------------------------- VERTEX --------------------------------- */
 
-#ifdef STAGE_VERTEX
+#ifdef VSH
 
 in vec4 vaColor;
 in vec3 vaPosition;
@@ -13,7 +13,6 @@ uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
 uniform mat4 textureMatrix;
 uniform vec3 chunkOffset;
-uniform float alphaTestRef;
 
 void main() {
   gl_Position = projectionMatrix * modelViewMatrix * vec4(vaPosition + chunkOffset, 1.0);
@@ -22,11 +21,11 @@ void main() {
   uv0 = vaUV0;
 }
 
-#endif // STAGE_VERTEX
+#endif // VSH
 
 /* -------------------------------- FRAGMENT -------------------------------- */
 
-#ifdef STAGE_FRAGMENT
+#ifdef FSH
 
 #include "/lib/common.glsl"
 
@@ -44,4 +43,4 @@ void main() {
   albedo = color * tint;
 }
 
-#endif // STAGE_FRAGMENT
+#endif // FSH

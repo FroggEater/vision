@@ -1,4 +1,4 @@
 #version 430
-#define STAGE_FRAGMENT
+#define FSH
 
 #include "/program/pipeline/gbuffers_clouds.glsl"

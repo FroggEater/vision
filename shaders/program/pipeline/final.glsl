@@ -1,49 +1,54 @@
 /* --------------------------------- COMPUTE -------------------------------- */
 
-#ifdef STAGE_COMPUTE
+#ifdef CSH
 
-#define clamp16F(x) clamp(x, 0.0, 65535.0)
+#include "/lib/math.glsl"
+#include "/lib/color/common.glsl"
 
-// Groups of 4x4 pixels ?
-// const vec2 workGroupsRender = vec2(0.25, 0.25);
-const ivec3 workGroups = ivec3(32, 32, 1);
+// Scaling for 256 executions (16 * 16 * 16 * 16)
+const vec2 workGroupsRender = vec2(0.00390625, 0.00390625);
 
-layout(local_size_x = 1, local_size_y = 1) in;
-
-layout(rgba8) uniform image2D colorimg0;
+layout(local_size_x = 16, local_size_y = 16) in;
+layout(std430, binding = 0) buffer histogram { uint bins[256]; uint count; };
 
 uniform sampler2D colortex0;
 
 void main() {
   ivec2 coord = ivec2(gl_GlobalInvocationID.xy);
-  ivec2 size = ivec2(imageSize(colorimg0).xy / (gl_NumWorkGroups.xy - 1));
+  uint index = gl_LocalInvocationIndex;
 
-  vec3 value = texelFetch(colortex0, coord * size, 0).rgb;
+  barrier();
 
-  for (int x = 0; x < size.x; x++) {
-    for (int y = 0; y < size.y; y++) {
-      imageStore(colorimg0, coord * size + ivec2(x, y), vec4(value, 1.0));
-    }
-  }
-  // imageStore(colorimg1, coord, vec4(value, 1.0));
+  vec4 color = texelFetch(colortex0, coord, 0);
+  float luminance = RGBToLuminance(color.rgb);
+  // luminance = clamp((log2(luminance) - 0.25) / 2.0, 0.0, 1.0);
+  uint bin = uint(luminance * 254.0 + 1.0);
+
+  barrier();
+
+  atomicAdd(bins[bin], 1);
+
+  if (coord.x == 0 && coord.y == 0)
+    atomicExchange(count, uint(prod(gl_NumWorkGroups.xy * gl_WorkGroupSize.xy)));
 }
 
-#endif // STAGE_COMPUTE
+#endif // CSH
 
 /* --------------------------------- VERTEX --------------------------------- */
 
-#ifdef STAGE_VERTEX
+#ifdef VSH
 
 #include "/program/vertex/simple.glsl"
 
-#endif // STAGE_VERTEX
+#endif // VSH
 
 /* -------------------------------- FRAGMENT -------------------------------- */
 
-#ifdef STAGE_FRAGMENT
+#ifdef FSH
 
 #include "/program/common.glsl"
 
+layout(std430, binding = 0) buffer histogram { uint bins[256]; uint count; };
 layout(location = 0) out vec3 color;
 
 in vec2 uv0;
@@ -51,7 +56,14 @@ in vec2 uv0;
 uniform sampler2D colortex0;
 
 void main() {
+  float averageLuminance = 0.0;
+  for (int i = 0; i < 256; i++) {
+    float luminance = float(i) / 255.0;
+    averageLuminance += luminance * float(bins[i]);
+  }
+  averageLuminance /= float(count);
   color = texture(colortex0, uv0).rgb;
+  // color = vec3(averageLuminance);
 }
 
-#endif // STAGE_FRAGMENT
+#endif // FSH

@@ -1,15 +1,16 @@
 /* --------------------------------- VERTEX --------------------------------- */
 
-#ifdef STAGE_VERTEX
+#ifdef VSH
 
 #include "/program/vertex/simple.glsl"
 
-#endif // STAGE_VERTEX
+#endif // VSH
 
 /* -------------------------------- FRAGMENT -------------------------------- */
 
-#ifdef STAGE_FRAGMENT
+#ifdef FSH
 
+layout(std430, binding = 0) buffer histogram { uint bins[256]; uint count; };
 layout(location = 0) out vec3 color;
 
 in vec2 uv0;
@@ -22,4 +23,4 @@ void main() {
   color = texture(colortex0, uv0).rgb;
 }
 
-#endif // STAGE_FRAGMENT
+#endif // FSH

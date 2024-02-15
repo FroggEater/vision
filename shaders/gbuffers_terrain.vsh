@@ -1,4 +1,4 @@
 #version 430
-#define STAGE_VERTEX
+#define VSH
 
 #include "/program/pipeline/gbuffers_terrain.glsl"

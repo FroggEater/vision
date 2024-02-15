@@ -20,7 +20,7 @@ const vec3 LUM = vec3(0.2126729, 0.7151522, 0.0721750);
 /* ---------------------------------- GAMMA --------------------------------- */
 
 vec3 fastestGammaToLinear(vec3 color) {
-  return sq(color);
+  return pow2(color);
 }
 vec3 fastestLinearToGamma(vec3 color) {
   return sqrt(color);
@@ -91,7 +91,7 @@ vec3 CIExyYToCIEXYZ(vec3 color) {
 vec3 CIEXYZToCIELab(vec3 color) {
   float a = 4.0 / 29.0;  // Reused constant
   float d = 6.0 / 29.0;  // Delta
-  float dt = cb(d);  // Delta treshold
+  float dt = pow3(d);  // Delta treshold
   float df = pow(d, -2.0);  // Delta factor
   float y = 1.0 / 3.0;  // Reused constant
   
@@ -112,15 +112,15 @@ vec3 CIEXYZToCIELab(vec3 color) {
 vec3 CIELabToCIEXYZ(vec3 color) {
   float a = 4.0 / 29.0;  // Reused constant
   float dt = 6.0 / 29.0;  // Delta treshold
-  float df = sq(dt);  // Delta factor
+  float df = pow2(dt);  // Delta factor
 
   float ty = (color.x + 16.0) / 116.0;
   float tx = ty + color.y / 500.0;
   float tz = ty - color.z / 200.0;
 
-  float fx = (tx > dt) ? cb(tx) : 3.0 * df * (tx - a);
-  float fy = (ty > dt) ? cb(ty) : 3.0 * df * (ty - a);
-  float fz = (tz > dt) ? cb(tz) : 3.0 * df * (tz - a);
+  float fx = (tx > dt) ? pow3(tx) : 3.0 * df * (tx - a);
+  float fy = (ty > dt) ? pow3(ty) : 3.0 * df * (ty - a);
+  float fz = (tz > dt) ? pow3(tz) : 3.0 * df * (tz - a);
 
   return vec3(
     fx * CIEXYZD65.x,

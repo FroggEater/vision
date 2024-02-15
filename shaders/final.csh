@@ -1,4 +1,4 @@
 #version 430
-#define VSH
+#define CSH
 
 #include "/program/pipeline/final.glsl"
